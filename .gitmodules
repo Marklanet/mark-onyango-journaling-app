@@ -1,0 +1,3 @@
+[submodule "journaling-app"]
+	path = journaling-app
+	url = https://github.com/Marklanet/Journal-app
