@@ -7,19 +7,19 @@ export const getUserFromToken = async (token: string): Promise<any> => {
     if (!token) {
       throw new Error('No token provided');
     }
-   
+
     const decoded: any = jwt.verify(token, secretKey);
 
     const userId = decoded.userId;
     const user = await User.findByPk(userId);
-    
+
     if (!user) {
       throw new Error('User not found');
     }
 
     return user;
   } catch (error) {
-    throw new Error('Authentication failed'); 
+    throw new Error('Authentication failed');
   }
 };
 
