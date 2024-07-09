@@ -3,7 +3,7 @@ import { typeDefs } from './schema/schema';
 import { resolvers } from './resolvers/resolvers';
 import dotenv from 'dotenv';
 import sequelize from './db/db';
-import { getUserFromToken } from './auth/auth'; // Adjust path as per your project structure
+import { getUserFromToken } from './auth/auth'; 
 
 dotenv.config();
 
@@ -18,7 +18,7 @@ const server = new ApolloServer({
     let user = null;
 
     // Identify the operation type
-    const operationName = req.body.operationName; // Assuming you're using JSON body parser
+    const operationName = req.body.operationName; 
 
     // Check if it's SignUp or LogIn mutation
     if (operationName === 'LogIn' || operationName === 'SignUp') {

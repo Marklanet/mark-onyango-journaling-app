@@ -40,7 +40,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   });
 
   const client = new ApolloClient({
-    link: authLink.concat(new HttpLink({ uri: 'http://192.168.43.146:4000/' })),
+    link: authLink.concat(new HttpLink({ uri: 'http://192.168.1.73:4000/' })),
     cache: new InMemoryCache(),
   });
 

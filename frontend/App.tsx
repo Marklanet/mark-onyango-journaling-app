@@ -10,7 +10,7 @@ import HomeScreen from './screens/HomeScreen';
 const Stack = createStackNavigator();
 
 const client = new ApolloClient({
-  uri: 'http://192.168.43.146:4000/',
+  uri: 'http://192.168.1.73:4000/',
   cache: new InMemoryCache(),
 });
 
