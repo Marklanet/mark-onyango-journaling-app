@@ -68,98 +68,37 @@ export const resolvers = {
         throw new AuthenticationError('Invalid credentials');
       }
     },
-    addJournalEntry: async (_: any, { title, content, category, date}: JournalEntryInput, context: any) => {
-      
-
-      if (!context || !context.user || !context.user.id) {
-        throw new AuthenticationError('Unauthorized: Missing or invalid user context');
-      }
-
-      try {
-        // Fetch the authenticated user from the database
-        const user = await UserModel.findByPk(context.user.id);
-        if (!user) {
-          throw new Error('User not found');
-        }
-
-        // Create a new journal entry associated with the authenticated user
-        const newEntry = await JournalEntryModel.create({
-          title,
-          content,
-          category,
-          date,
-          userId: user.id,
-        });
-
-        return newEntry;
-      } catch (error: any) { // Explicitly type 'error' as 'any' or 'unknown' as needed
-        throw new Error(`Failed to add journal entry: ${(error as Error).message}`);
-      }
+    addJournalEntry: async (_: any, { title, content, category, date, userId }: JournalEntryInput) => {
+      return await JournalEntryModel.create({ title, content, category, date, userId });
     },
-    updateJournalEntry: async (_: any, { id, title, content, category, date }: JournalEntryInput, context: any) => {
-      // Check JWT token from context to authenticate
-   
-      if (!context.user) {
-        throw new AuthenticationError('Unauthorized');
-      }
-      
+    updateJournalEntry: async (_: any, { id, title, content, category, date }: JournalEntryInput) => {
       const journalEntry = await JournalEntryModel.findByPk(id);
       if (!journalEntry) {
         throw new Error('Entry not found');
       }
-      if (journalEntry.userId !== context.user.id) {
-        throw new AuthenticationError('Not authorized to update this entry');
-      }
-      
-      const [updatedCount, updatedEntries] = await JournalEntryModel.update(
-        { title, content, category, date },
-        { where: { id }, returning: true }
-      );
-      if (updatedCount === 0) {
-        throw new Error('Entry not found');
-      }
-      return updatedEntries[0];
+
+      const updatedEntry = await journalEntry.update({ title, content, category, date });
+      return updatedEntry;
     },
-    
-    deleteJournalEntry: async (_: any, { id }: { id: number }, context: any) => {
-     
-      if (!context.user) {
-        throw new AuthenticationError('Unauthorized');
-      }
-      
+    deleteJournalEntry: async (_: any, { id }: { id: number }) => {
       const journalEntry = await JournalEntryModel.findByPk(id);
       if (!journalEntry) {
         throw new Error('Entry not found');
       }
-      if (journalEntry.userId !== context.user.id) {
-        throw new AuthenticationError('Not authorized to delete this entry');
-      }
-      
+
       await journalEntry.destroy();
       return journalEntry;
     },
-    
-    updateUser: async (_: any, { id, username, password }: UserInput, context: any) => {
-      if (!context.user) {
-        throw new AuthenticationError('Unauthorized');
-      }
-    
-      // Ensure the authenticated user is updating their own profile
-      if (context.user.id !== id) {
-        throw new AuthenticationError('Not authorized to update this user');
-      }
-    
-      const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-      const [updatedCount, updatedUsers] = await UserModel.update(
-        { username, password: hashedPassword },
-        { where: { id }, returning: true }
-      );
-    
-      if (updatedCount === 0) {
+    updateUser: async (_: any, { id, username, password }: UserInput) => {
+      const user = await UserModel.findByPk(id);
+      if (!user) {
         throw new Error('User not found');
       }
-    
-      return updatedUsers[0];
+
+      const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+      await user.update({ username, password: hashedPassword });
+
+      return user;
     },
-  }
+  },
 };

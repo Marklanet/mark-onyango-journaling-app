@@ -1,4 +1,4 @@
-export const typeDefs = `#graphql
+
   type User {
     id: ID!
     username: String!
@@ -35,4 +35,4 @@ export const typeDefs = `#graphql
     deleteJournalEntry(id: ID!): JournalEntry
     updateUser(id: ID!, username: String, password: String): User
   }
-`;
+

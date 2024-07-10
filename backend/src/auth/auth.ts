@@ -9,7 +9,6 @@ export const getUserFromToken = async (token: string): Promise<any> => {
     }
 
     const decoded: any = jwt.verify(token, secretKey);
-
     const userId = decoded.userId;
     const user = await User.findByPk(userId);
 

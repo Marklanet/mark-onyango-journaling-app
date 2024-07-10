@@ -14,14 +14,11 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   context: async ({ req }: { req: any }) => {
- 
     const token = req.headers.authorization || '';
     let user = null;
 
-    // Extract the query from the request body
     const { query } = req.body;
 
-    // Parse the query to get the operation name
     let operationName = '';
     if (query) {
       const parsedQuery = parse(query);
@@ -30,16 +27,10 @@ const server = new ApolloServer({
         operationName = definition.name ? definition.name.value : '';
       }
     }
-
-    // Log the operation name to see its content
-    console.log(`operation name: ${operationName}`);
     
-    // Check if it's SignUp or LogIn mutation
-    if (operationName === 'LogIn' || operationName === 'SignUp') {
-      // Allow SignUp and LogIn mutations without token
+    if (operationName === 'logIn' || operationName === 'signUp') {
       user = null;
     } else {
-      // For other mutations and queries, require token and fetch user
       if (token) {
         try {
           user = await getUserFromToken(token);
@@ -65,8 +56,7 @@ const server = new ApolloServer({
 
 (async () => {
   try {
-    // Synchronize all models with the database
-    await sequelize.sync({ force: false }); // Set force to true to drop tables if they already exist
+    await sequelize.sync({ force: false });
     console.log('Database synchronized successfully.');
 
     const { url } = await server.listen({ port });
